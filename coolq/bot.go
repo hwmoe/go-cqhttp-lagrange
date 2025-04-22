@@ -429,8 +429,8 @@ func (bot *CQBot) InsertGroupMessage(m *message.GroupMessage, source message.Sou
 		},
 		GroupCode: int64(m.GroupUin),
 		AnonymousID: func() string {
-			if m.Sender.IsAnonymous() {
-				return m.Sender.AnonymousInfo.AnonymousID
+			if m.Sender.UID == "80000000" {
+				return "80000000"
 			}
 			return ""
 		}(),
@@ -559,8 +559,7 @@ func formatMemberName(mem *entity.GroupMember) string {
 
 // encodeMessageID 临时先这样, 暂时用不上
 func encodeMessageID(target int64, seq int32) string {
-	return hex.EncodeToString(binary.NewWriterF(func(w *binary.Builder) {
-		w.WriteU64(uint64(target))
-		w.WriteU32(uint32(seq))
-	}))
+	builder := binary.NewBuilder()
+	builder.WriteU64(uint64(target)).WriteU32(uint32(seq))
+	return hex.EncodeToString(builder.ToBytes())
 }

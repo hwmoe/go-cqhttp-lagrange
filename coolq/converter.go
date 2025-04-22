@@ -73,11 +73,11 @@ func (bot *CQBot) formatGroupMessage(m *message.GroupMessage) *event {
 		},
 		"user_id": m.Sender.Uin,
 	}
-	if m.Sender.IsAnonymous() {
+	if m.Sender.UID == "80000000" {
 		gm["anonymous"] = global.MSG{
-			"flag": m.Sender.AnonymousInfo.AnonymousID + "|" + m.Sender.AnonymousInfo.AnonymousNick,
+			"flag": "80000000" + "|" + "桥本环奈",
 			"id":   m.Sender.Uin,
-			"name": m.Sender.AnonymousInfo.AnonymousNick,
+			"name": "桥本环奈",
 		}
 		gm["sender"].(global.MSG)["nickname"] = "匿名消息"
 		typ = "message/group/anonymous"

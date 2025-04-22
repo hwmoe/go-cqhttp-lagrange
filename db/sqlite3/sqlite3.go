@@ -230,12 +230,12 @@ func (s *database) InsertGroupMessage(msg *db.StoredGroupMessage) error {
 	}
 	h := crc64.New(crc64.MakeTable(crc64.ISO))
 	if msg.Attribute != nil {
-		h.Write(binary.NewWriterF(func(w *binary.Builder) {
-			w.WriteU32(uint32(msg.Attribute.MessageSeq))
-			w.WriteU32(uint32(msg.Attribute.InternalID))
-			w.WriteU64(uint64(msg.Attribute.SenderUin))
-			w.WriteU64(uint64(msg.Attribute.Timestamp))
-		}))
+		builder := binary.NewBuilder()
+		builder.WriteU32(uint32(msg.Attribute.MessageSeq))
+		builder.WriteU32(uint32(msg.Attribute.InternalID))
+		builder.WriteU64(uint64(msg.Attribute.SenderUin))
+		builder.WriteU64(uint64(msg.Attribute.Timestamp))
+		h.Write(builder.ToBytes())
 		h.Write(utils.S2B(msg.Attribute.SenderName))
 		id := int64(h.Sum64())
 		if id == 0 {
@@ -263,9 +263,9 @@ func (s *database) InsertGroupMessage(msg *db.StoredGroupMessage) error {
 	}
 	if msg.QuotedInfo != nil {
 		h.Write(utils.S2B(msg.QuotedInfo.PrevID))
-		h.Write(binary.NewWriterF(func(w *binary.Builder) {
-			w.WriteU32(uint32(msg.QuotedInfo.PrevGlobalID))
-		}))
+		builder := binary.NewBuilder()
+		builder.WriteU32(uint32(msg.QuotedInfo.PrevGlobalID))
+		h.Write(builder.ToBytes())
 		content, err := yaml.Marshal(&msg.QuotedInfo)
 		if err != nil {
 			return errors.Wrap(err, "insert marshal QuotedContent error")
@@ -311,12 +311,12 @@ func (s *database) InsertPrivateMessage(msg *db.StoredPrivateMessage) error {
 	}
 	h := crc64.New(crc64.MakeTable(crc64.ISO))
 	if msg.Attribute != nil {
-		h.Write(binary.NewWriterF(func(w *binary.Builder) {
-			w.WriteU32(uint32(msg.Attribute.MessageSeq))
-			w.WriteU32(uint32(msg.Attribute.InternalID))
-			w.WriteU64(uint64(msg.Attribute.SenderUin))
-			w.WriteU64(uint64(msg.Attribute.Timestamp))
-		}))
+		builder := binary.NewBuilder()
+		builder.WriteU32(uint32(msg.Attribute.MessageSeq))
+		builder.WriteU32(uint32(msg.Attribute.InternalID))
+		builder.WriteU64(uint64(msg.Attribute.SenderUin))
+		builder.WriteU64(uint64(msg.Attribute.Timestamp))
+		h.Write(builder.ToBytes())
 		h.Write(utils.S2B(msg.Attribute.SenderName))
 		id := int64(h.Sum64())
 		if id == 0 {
@@ -344,9 +344,9 @@ func (s *database) InsertPrivateMessage(msg *db.StoredPrivateMessage) error {
 	}
 	if msg.QuotedInfo != nil {
 		h.Write(utils.S2B(msg.QuotedInfo.PrevID))
-		h.Write(binary.NewWriterF(func(w *binary.Builder) {
-			w.WriteU32(uint32(msg.QuotedInfo.PrevGlobalID))
-		}))
+		builder := binary.NewBuilder()
+		builder.WriteU32(uint32(msg.QuotedInfo.PrevGlobalID))
+		h.Write(builder.ToBytes())
 		content, err := yaml.Marshal(&msg.QuotedInfo)
 		if err != nil {
 			return errors.Wrap(err, "insert marshal QuotedContent error")

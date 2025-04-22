@@ -46,7 +46,9 @@ func (ldb *database) Open() error {
 }
 
 func (ldb *database) GetMessageByGlobalID(id int32) (_ db.StoredMessage, err error) {
-	v, err := ldb.db.Get(binary.ToBytes(id), nil)
+	builder := binary.NewBuilder()
+	builder.WriteU32(uint32(id))
+	v, err := ldb.db.Get(builder.ToBytes(), nil)
 	if err != nil || len(v) == 0 {
 		return nil, errors.Wrap(err, "get value error")
 	}
@@ -97,7 +99,9 @@ func (ldb *database) InsertGroupMessage(msg *db.StoredGroupMessage) error {
 	w := newWriter()
 	w.uvarint(group)
 	w.writeStoredGroupMessage(msg)
-	err := ldb.db.Put(binary.ToBytes(msg.GlobalID), w.bytes(), nil)
+	builder := binary.NewBuilder()
+	builder.WriteU32(uint32(msg.GlobalID))
+	err := ldb.db.Put(builder.ToBytes(), w.bytes(), nil)
 	return errors.Wrap(err, "put data error")
 }
 
@@ -105,6 +109,8 @@ func (ldb *database) InsertPrivateMessage(msg *db.StoredPrivateMessage) error {
 	w := newWriter()
 	w.uvarint(private)
 	w.writeStoredPrivateMessage(msg)
-	err := ldb.db.Put(binary.ToBytes(msg.GlobalID), w.bytes(), nil)
+	builder := binary.NewBuilder()
+	builder.WriteU32(uint32(msg.GlobalID))
+	err := ldb.db.Put(builder.ToBytes(), w.bytes(), nil)
 	return errors.Wrap(err, "put data error")
 }

@@ -2,10 +2,9 @@
 package msg
 
 import (
+	"bytes"
 	"strings"
 	"unicode/utf8"
-
-	"github.com/LagrangeDev/LagrangeGo/utils/binary"
 )
 
 // @@@ CQ码转义处理 @@@
@@ -135,24 +134,23 @@ func (e *Element) WriteCQCodeTo(sb *strings.Builder) {
 
 // MarshalJSON see encoding/json.Marshaler
 func (e *Element) MarshalJSON() ([]byte, error) {
-	return binary.NewWriterF(func(w *binary.Builder) {
-		buf := w.Buffer()
-		// fmt.Fprintf(buf, `{"type":"%s","data":{`, e.Type)
-		buf.WriteString(`{"type":"`)
-		buf.WriteString(e.Type)
-		buf.WriteString(`","data":{`)
-		for i, data := range e.Data {
-			if i != 0 {
-				buf.WriteByte(',')
-			}
-			// fmt.Fprintf(buf, `"%s":%q`, data.K, data.V)
-			buf.WriteByte('"')
-			buf.WriteString(data.K)
-			buf.WriteString(`":`)
-			buf.WriteString(QuoteJSON(data.V))
+	var buf bytes.Buffer
+	buf.WriteString(`{"type":"`)
+	buf.WriteString(e.Type)
+	buf.WriteString(`","data":{`)
+
+	for i, data := range e.Data {
+		if i != 0 {
+			buf.WriteByte(',')
 		}
-		buf.WriteString(`}}`)
-	}), nil
+		buf.WriteByte('"')
+		buf.WriteString(data.K)
+		buf.WriteString(`":`)
+		buf.WriteString(QuoteJSON(data.V)) // 假设这是已有的转义函数
+	}
+	buf.WriteString(`}}`)
+
+	return buf.Bytes(), nil
 }
 
 const hex = "0123456789abcdef"
