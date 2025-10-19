@@ -212,7 +212,7 @@ func LoginInteract() {
 		time.Sleep(time.Second * 5)
 	}
 	log.Info("开始尝试登录并同步消息...")
-	app := auth.AppList["linux"]["3.2.15-30366"]
+	app := auth.AppList["linux"]["3.2.19-39038"]
 	log.Infof("使用协议: %s", app.CurrentVersion)
 	cli = newClient(app)
 	cli.UseDevice(device)
