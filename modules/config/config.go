@@ -39,6 +39,7 @@ type Account struct {
 	SignServers       []SignServer `yaml:"sign-servers"`
 	MaxCheckCount     uint         `yaml:"max-check-count"`
 	SignServerTimeout uint         `yaml:"sign-server-timeout"`
+	AppInfoUrl        string       `yaml:"appinfo-url"`
 }
 
 // SignServer 签名服务器

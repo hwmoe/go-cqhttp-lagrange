@@ -36,6 +36,9 @@ account: # 账号相关
   # 签名服务请求超时时间(s)
   sign-server-timeout: 60
 
+  # 远程获取 AppInfo 的 URL 地址, 留空则使用内置默认值
+  appinfo-url: ""
+
 heartbeat:
   # 心跳频率, 单位秒
   # -1 为关闭心跳
